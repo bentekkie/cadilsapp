@@ -38,18 +38,14 @@ const App = () => {
     const amount = parseFloat(inputValue) || 0;
     
     if (!isInverted) {
-      // ILS to CAD
       if (isWeightMode) {
-        // (ILS/kg * rate) / 2.20462 = CAD/lb
         setResultValue((amount * rate) / KG_TO_LB);
       } else {
         setResultValue(amount * rate);
       }
     } else {
-      // CAD to ILS
       const inverseRate = 1 / rate;
       if (isWeightMode) {
-        // ($/lb * 2.20462) * inverseRate = ILS/kg
         setResultValue((amount * KG_TO_LB) * inverseRate);
       } else {
         setResultValue(amount * inverseRate);
@@ -57,10 +53,7 @@ const App = () => {
     }
   }, [inputValue, isWeightMode, isInverted, rate]);
 
-  const handleFlip = () => {
-    setIsInverted(!isInverted);
-  };
-
+  const handleFlip = () => setIsInverted(!isInverted);
   const handleClear = () => setInputValue('');
 
   const sourceCurrency = isInverted ? 'CAD' : 'ILS';
@@ -70,19 +63,18 @@ const App = () => {
   const sourceWeightUnit = isInverted ? 'lb' : 'kg';
   const targetWeightUnit = isInverted ? 'kg' : 'lb';
 
-  // Calculate the display rate based on direction
   const displayRate = isInverted ? (1 / rate).toFixed(4) : rate.toFixed(4);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 font-sans text-slate-900">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+    <div className="min-h-screen bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-4 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300">
+      <div className="w-full max-w-md bg-slate-50 dark:bg-slate-900 rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
         
         {/* Header */}
-        <div className="bg-indigo-600 p-6 text-white text-center relative">
+        <div className="bg-slate-900 dark:bg-indigo-950 p-6 text-white text-center relative">
           <h1 className="text-2xl font-bold flex items-center justify-center gap-2">
             Price Converter
           </h1>
-          <div className="flex items-center justify-center gap-2 mt-1 text-indigo-100 text-sm">
+          <div className="flex items-center justify-center gap-2 mt-1 text-slate-400 dark:text-indigo-200 text-sm font-medium">
             <span>{sourceCurrency}</span>
             <ArrowLeftRight size={14} className="opacity-50" />
             <span>{targetCurrency}</span>
@@ -98,7 +90,7 @@ const App = () => {
         </div>
 
         {error && (
-          <div className="bg-amber-50 border-b border-amber-100 px-4 py-2 flex items-center gap-2 text-amber-700 text-xs">
+          <div className="bg-amber-50 dark:bg-amber-950/30 border-b border-amber-100 dark:border-amber-900/50 px-4 py-2 flex items-center gap-2 text-amber-700 dark:text-amber-400 text-xs">
             <AlertCircle size={14} />
             {error}
           </div>
@@ -108,39 +100,39 @@ const App = () => {
           
           {/* Controls: Mode & Flip */}
           <div className="space-y-3">
-            <div className="flex bg-slate-100 p-1 rounded-xl">
+            <div className="flex bg-slate-200 dark:bg-slate-800 p-1 rounded-2xl">
               <button 
                 onClick={() => setIsWeightMode(false)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${!isWeightMode ? 'bg-white shadow-sm font-semibold text-indigo-600' : 'text-slate-500'}`}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${!isWeightMode ? 'bg-white dark:bg-slate-700 shadow-sm font-bold text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}
               >
                 <DollarSign size={18} />
-                Total Price
+                Total
               </button>
               <button 
                 onClick={() => setIsWeightMode(true)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${isWeightMode ? 'bg-white shadow-sm font-semibold text-indigo-600' : 'text-slate-500'}`}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${isWeightMode ? 'bg-white dark:bg-slate-700 shadow-sm font-bold text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}
               >
                 <Scale size={18} />
-                Per Weight
+                Weight
               </button>
             </div>
 
             <button 
               onClick={handleFlip}
-              className="w-full flex items-center justify-center gap-2 py-2 border-2 border-slate-100 rounded-xl text-slate-500 hover:bg-slate-50 transition-colors text-sm font-medium"
+              className="w-full flex items-center justify-center gap-2 py-3 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-colors text-sm font-semibold shadow-sm"
             >
               <ArrowLeftRight size={16} />
-              Switch Direction ({sourceCurrency} → {targetCurrency})
+              Switch Direction
             </button>
           </div>
 
           {/* Input Section */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-500 block">
-              Price in {sourceSymbol} {isWeightMode ? `per ${sourceWeightUnit}` : ''}
+            <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block ml-1">
+              Input Price ({sourceSymbol}) {isWeightMode ? `per ${sourceWeightUnit}` : ''}
             </label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl font-light">
+            <div className="relative group">
+              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-600 text-2xl font-light">
                 {sourceSymbol}
               </span>
               <input
@@ -149,53 +141,57 @@ const App = () => {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="0.00"
-                className="w-full pl-10 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-indigo-400 focus:bg-white rounded-2xl text-2xl outline-none transition-all"
+                className="w-full pl-12 pr-6 py-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 rounded-[1.5rem] text-3xl font-medium outline-none transition-all placeholder:text-slate-200 dark:placeholder:text-slate-700"
               />
             </div>
           </div>
 
           {/* Result Section */}
-          <div className="bg-indigo-50 rounded-2xl p-6 border border-indigo-100 text-center relative">
-            <p className="text-indigo-600 text-xs font-bold uppercase tracking-widest mb-1">
-              Estimated Price in {targetCurrency}
+          <div className="bg-white dark:bg-slate-800 rounded-[1.5rem] p-6 border border-slate-200 dark:border-slate-700 text-center shadow-sm">
+            <p className="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] mb-2">
+              Result in {targetCurrency}
             </p>
-            <div className="text-4xl font-bold text-slate-800">
-              {targetSymbol}{resultValue.toFixed(2)}
-              <span className="text-lg text-slate-400 font-normal ml-2">
+            <div className="text-5xl font-bold text-slate-900 dark:text-white tracking-tight">
+              {targetSymbol}{resultValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <span className="text-xl text-slate-400 dark:text-slate-600 font-medium ml-2">
                 {isWeightMode ? `/ ${targetWeightUnit}` : ''}
               </span>
             </div>
           </div>
 
-          {/* Details */}
-          <div className="text-[11px] text-slate-400 space-y-2 bg-slate-50/50 p-3 rounded-xl border border-slate-100">
-            <div className="flex justify-between">
-              <span>Current Rate:</span>
-              <span className="font-mono text-slate-600 font-medium">
+          {/* Detailed Info Card */}
+          <div className="bg-slate-200/50 dark:bg-slate-950/50 rounded-2xl p-4 space-y-3">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-slate-500 dark:text-slate-400">Exchange Rate</span>
+              <span className="font-mono font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 px-2 py-1 rounded-md border border-slate-200 dark:border-slate-700">
                 1 {sourceCurrency} = {displayRate} {targetCurrency}
               </span>
             </div>
             {isWeightMode && (
-              <div className="flex justify-between">
-                <span>Weight Factor:</span>
-                <span className="font-mono text-slate-600">1 kg = 2.2046 lb</span>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-500 dark:text-slate-400">Weight Standard</span>
+                <span className="font-mono font-bold text-slate-700 dark:text-slate-300">1 kg = 2.2046 lb</span>
               </div>
             )}
             <button 
               onClick={handleClear}
-              className="w-full pt-2 text-indigo-500 font-semibold hover:text-indigo-600"
+              className="w-full pt-2 text-indigo-600 dark:text-indigo-400 font-bold text-xs uppercase tracking-widest hover:opacity-80 transition-opacity"
             >
-              Clear
+              Clear All
             </button>
           </div>
 
         </div>
 
-        <div className="bg-slate-50 p-3 border-t border-slate-100 text-center">
-          <p className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">
-            Live Market Rates • Frankfurter API
+        <div className="bg-slate-100 dark:bg-slate-900/50 p-4 text-center border-t border-slate-200 dark:border-slate-800">
+          <p className="text-[9px] text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] font-black">
+            Systems Online • Rate Updated {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </p>
         </div>
+      </div>
+      
+      <div className="mt-8 text-slate-400 dark:text-slate-600 text-[10px] text-center max-w-xs leading-relaxed uppercase tracking-widest">
+        Handy for kosher grocery checks in Israel & Canada
       </div>
     </div>
   );
